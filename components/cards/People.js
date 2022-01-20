@@ -1,0 +1,61 @@
+import { useContext } from "react";
+import { Avatar, List } from "antd";
+import moment from "moment";
+import { useRouter } from "next/router";
+import { UserContext } from "../../context";
+import { imageSource } from "../../functions";
+import Link from "next/link";
+
+const People = ({ people, handleFollow, handleUnfollow }) => {
+  const [state] = useContext(UserContext);
+
+  const router = useRouter();
+
+  return (
+    <>
+      <List
+        itemLayout="horizontal"
+        dataSource={people}
+        renderItem={(user) => (
+          <List.Item>
+            <List.Item.Meta
+              avatar={<Avatar src={imageSource(user)} />}
+              title={
+                <div className="d-flex justify-content-between">
+                  <Link href={`/user/${user.username}`}>
+                    <a>{user.username}</a>
+                  </Link>
+
+                  {state &&
+                  state.user &&
+                  user.followers &&
+                  user.followers.includes(state.user._id) ? (
+                    <span
+                      className="btn text-dark"
+                      onClick={() => {
+                        handleUnfollow(user);
+                      }}
+                    >
+                      Unfollow
+                    </span>
+                  ) : (
+                    <span
+                      className="btn text-primary"
+                      onClick={() => {
+                        handleFollow(user);
+                      }}
+                    >
+                      Follow
+                    </span>
+                  )}
+                </div>
+              }
+            />
+          </List.Item>
+        )}
+      />
+    </>
+  );
+};
+
+export default People;
